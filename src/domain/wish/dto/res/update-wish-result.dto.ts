@@ -3,11 +3,9 @@ import { WishDto } from './wish.dto';
 import { Exclude } from 'class-transformer';
 
 @Exclude()
-export class CreateWishResultDto extends PickType(WishDto, [
+export class UpdateWishResultDto extends PickType(WishDto, [
   'id',
-  'title',
-  'content',
-  'category',
+  'status',
   'createdAt',
   'updatedAt',
 ]) {}

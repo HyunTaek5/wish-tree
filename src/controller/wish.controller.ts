@@ -4,12 +4,15 @@ import {
   Delete,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { WishService } from '../domain/wish/wish.service';
 import { CreateWishDto } from '../domain/wish/dto/req/create-wish.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateWishResultDto } from '../domain/wish/dto/res/create-wish-result.dto';
+import { UpdateWishStatusDto } from '../domain/wish/dto/req/update-wish-status.dto';
+import { UpdateWishResultDto } from '../domain/wish/dto/res/update-wish-result.dto';
 
 @ApiTags('wish')
 @Controller('wishes')
@@ -24,6 +27,19 @@ export class WishController {
   @Post()
   async createWish(@Body() dto: CreateWishDto): Promise<CreateWishResultDto> {
     return this.wishService.createWish(dto);
+  }
+
+  @ApiOperation({
+    summary: '소원 승인/거절',
+    description: '소원을 승인/거절합니다.',
+    operationId: 'patchWishStatus',
+  })
+  @Patch(':id')
+  async patchWishStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateWishStatusDto,
+  ): Promise<UpdateWishResultDto> {
+    return this.wishService.patchWishStatus(id, dto);
   }
 
   @ApiOperation({
