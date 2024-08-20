@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Patch,
@@ -13,6 +14,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateWishResultDto } from '../domain/wish/dto/res/create-wish-result.dto';
 import { UpdateWishStatusDto } from '../domain/wish/dto/req/update-wish-status.dto';
 import { UpdateWishResultDto } from '../domain/wish/dto/res/update-wish-result.dto';
+import { GetWishDto } from '../domain/wish/dto/res/get-wish.dto';
 
 @ApiTags('wish')
 @Controller('wishes')
@@ -27,6 +29,18 @@ export class WishController {
   @Post()
   async createWish(@Body() dto: CreateWishDto): Promise<CreateWishResultDto> {
     return this.wishService.createWish(dto);
+  }
+
+  @ApiOperation({
+    summary: '소원 단일 조회',
+    description: '소원을 id로 단일 조회합니다.',
+    operationId: 'getWishById',
+  })
+  @Get(':id')
+  async getWishById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GetWishDto> {
+    return this.wishService.getWishById(id);
   }
 
   @ApiOperation({

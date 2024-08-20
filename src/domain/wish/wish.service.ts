@@ -11,6 +11,7 @@ import { kysely } from '../../db/kysely';
 import { UpdateWishStatusDto } from './dto/req/update-wish-status.dto';
 import { WishStatus } from '../../db/enums';
 import { UpdateWishResultDto } from './dto/res/update-wish-result.dto';
+import { GetWishDto } from './dto/res/get-wish.dto';
 
 @Injectable()
 export class WishService {
@@ -31,7 +32,7 @@ export class WishService {
 
   // 소원 삭제
   async deleteWish(id: number): Promise<void> {
-    await this.validIfWishExist(id);
+    await this.getIfWishExist(id);
 
     await this.prisma.wish.update({
       where: { id: id },
@@ -48,7 +49,7 @@ export class WishService {
       throw new BadRequestException('승인/거절 상태로만 변경 가능합니다.');
     }
 
-    await this.validIfWishExist(id);
+    await this.getIfWishExist(id);
 
     const updatedWish = await this.prisma.wish.update({
       where: { id: id },
@@ -58,8 +59,15 @@ export class WishService {
     return plainToInstance(UpdateWishResultDto, updatedWish);
   }
 
-  async validIfWishExist(id: number): Promise<void> {
-    await kysely.transaction().execute(async (tx) => {
+  // 소원 단일 조회
+  async getWishById(id: number): Promise<GetWishDto> {
+    const wish = await this.getIfWishExist(id);
+
+    return plainToInstance(GetWishDto, wish);
+  }
+
+  async getIfWishExist(id: number) {
+    const wish = await kysely.transaction().execute(async (tx) => {
       const targetWish = await tx
         .selectFrom('wish')
         .where('id', '=', id)
@@ -70,6 +78,10 @@ export class WishService {
       if (!targetWish) {
         throw new NotFoundException('소원이 존재하지 않습니다.');
       }
+
+      return targetWish;
     });
+
+    return wish;
   }
 }
