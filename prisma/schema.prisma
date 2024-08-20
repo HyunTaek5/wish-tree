@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator kysely {
+  provider = "prisma-kysely"
+
+  // Optionally provide a destination directory for the generated file
+  // and a filename of your choice
+  output       = "../src/db"
+  fileName     = "types.ts"
+  // Optionally generate runtime enums to a separate file
+  enumFileName = "enums.ts"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum WishStatus {
+  PENDING // 보류됨
+  ACCEPTED // 승인됨
+  REJECTED // 거절됨
+}
+
+enum Category {
+  DREAM // 진로
+  HEALTH // 건강
+  HUMAN_RELATIONSHIP // 인간관계
+  MONEY // 돈
+  ACHEIVE // 목표
+  EDUCATION // 학업/성적
+  ETC // 기타
+}
+
+model Wish {
+  id        Int        @id @default(autoincrement())
+  title     String
+  content   String
+  category  Category
+  status    WishStatus @default(PENDING)
+  comments  Comment[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean    @default(false)
+
+  @@map("wish")
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  wishId    Int
+  wish      Wish      @relation(fields: [wishId], references: [id])
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+  isDeleted Boolean   @default(false)
+
+  @@map("comment")
+}
