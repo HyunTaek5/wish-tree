@@ -6,7 +6,6 @@ import { Exclude } from 'class-transformer';
 export class GetWishDto extends PickType(WishDto, [
   'id',
   'title',
-  'content',
   'category',
   'createdAt',
 ]) {}
