@@ -26,6 +26,7 @@ import {
   PaginatedResult,
   SwaggerPaginateResult,
 } from '../domain/common/paginated-result.dto';
+import { SearchWishDto } from '../domain/wish/dto/req/search-wish.dto';
 
 @ApiTags('wish')
 @Controller('wishes')
@@ -64,6 +65,16 @@ export class WishController {
   @Post()
   async createWish(@Body() dto: CreateWishDto): Promise<CreateWishResultDto> {
     return this.wishService.createWish(dto);
+  }
+
+  @ApiOperation({
+    summary: '소원 검색',
+    description: '소원을 검색합니다.',
+    operationId: 'searchWishes',
+  })
+  @Get('search')
+  async searchWishes(@Query() dto: SearchWishDto): Promise<GetWishDto[]> {
+    return this.wishService.searchWishes(dto);
   }
 
   @ApiOperation({

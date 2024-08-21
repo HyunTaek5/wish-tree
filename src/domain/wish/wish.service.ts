@@ -17,6 +17,7 @@ import {
   PaginatedResult,
   PaginatedResultDto,
 } from '../common/paginated-result.dto';
+import { SearchWishDto } from './dto/req/search-wish.dto';
 
 @Injectable()
 export class WishService {
@@ -67,6 +68,10 @@ export class WishService {
   // 소원 단일 조회
   async getWishById(id: number): Promise<GetWishDto> {
     const wish = await this.getIfWishExist(id);
+
+    if (wish.status !== WishStatus.ACCEPTED) {
+      throw new NotFoundException('해당 소원을 찾을 수 없습니다.');
+    }
 
     return plainToInstance(GetWishDto, wish);
   }
@@ -119,6 +124,19 @@ export class WishService {
 
       return plainToInstance(GetWishDto, wishes);
     }
+  }
+
+  async searchWishes(dto: SearchWishDto): Promise<GetWishDto[]> {
+    const wishes = await this.prisma.wish.findMany({
+      where: {
+        title: { contains: dto.keyword },
+        content: { contains: dto.keyword },
+        isDeleted: false,
+        ...(dto.category && { category: dto.category }),
+      },
+    });
+
+    return plainToInstance(GetWishDto, wishes);
   }
 
   async getIfWishExist(id: number) {
