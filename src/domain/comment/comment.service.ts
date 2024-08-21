@@ -34,6 +34,24 @@ export class CommentService {
     return plainToInstance(CreateCommentResultDto, comment);
   }
 
+  async deleteComment(id: number): Promise<void> {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: id,
+        isDeleted: false,
+      },
+    });
+
+    if (!comment) {
+      throw new BadRequestException('존재하지 않거나 이미 삭제된 댓글입니다.');
+    }
+
+    await this.prisma.comment.update({
+      where: { id: id },
+      data: { deletedAt: new Date(), isDeleted: true },
+    });
+  }
+
   async getComments(
     dto: GetCommentDto,
   ): Promise<PaginatedResultDto<GetCommentResultDto> | GetCommentResultDto[]> {

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -53,5 +62,15 @@ export class CommentController {
     @Body() dto: CreateCommentDto,
   ): Promise<CreateCommentResultDto> {
     return this.commentService.createComment(dto);
+  }
+
+  @ApiOperation({
+    summary: '댓글 삭제',
+    description: '댓글을 삭제합니다.',
+    operationId: 'deleteComment',
+  })
+  @Delete(':id')
+  async deleteComment(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.commentService.deleteComment(id);
   }
 }
