@@ -5,6 +5,21 @@ volumes:
     driver: local
 
 services:
+  api:
+    image: dylan5h/wish-tree-api:latest
+    container_name: wish-tree-api
+    environment:
+      API_PORT: 8000
+      DATABASE_URL: mysql://user:password@db:3306/wish-tree-db
+      SHADOW_DATABASE_URL: mysql://user:password@shadow-db:3306/wish-tree-shadow-db
+      KYSELY_DB_HOST: db
+      KYSELY_DB_PORT: 3306
+      KYSELY_DB_USER: user
+      KYSELY_DB_PASSWORD: password
+      KYSELY_DB_NAME: wish-tree-db
+    ports:
+      - '8000:8000'
+
   db:
     image: mysql/mysql-server:8.0
     container_name: wish-tree-db

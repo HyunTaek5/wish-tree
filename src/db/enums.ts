@@ -3,9 +3,7 @@ export const WishStatus = {
   ACCEPTED: 'ACCEPTED',
   REJECTED: 'REJECTED',
 } as const;
-
 export type WishStatus = (typeof WishStatus)[keyof typeof WishStatus];
-
 export const Category = {
   DREAM: 'DREAM',
   HEALTH: 'HEALTH',
@@ -15,5 +13,4 @@ export const Category = {
   EDUCATION: 'EDUCATION',
   ETC: 'ETC',
 } as const;
-
 export type Category = (typeof Category)[keyof typeof Category];
